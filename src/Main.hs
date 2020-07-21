@@ -42,18 +42,18 @@ runAssignment ts f = do
 
 printHelp :: IO ()
 printHelp = do
-  putStrLn "Invalid input. Usage:"
-  putStrLn "    docker-run.sh <tasks> [method]"
-  putStrLn ""
-  putStrLn "    tasks - a string holding the list of tasks (positive integers)"
-  putStrLn "            for example: '[5, 4, 1, 2, 7, 8, 3]'"
-  putStrLn ""
-  putStrLn "    method - (optional) algorithm used to solve. One of:"
+  putStrLn   "Invalid input. Usage:"
+  putStrLn   "    docker-run.sh <tasks> [method]"
+  putStrLn   ""
+  putStrLn   "    tasks - a string holding the list of tasks (positive integers)"
+  putStrLn   "            for example: '[5, 4, 1, 2, 7, 8, 3]'"
+  putStrLn   ""
+  putStrLn   "    method - (optional) algorithm used to solve. One of:"
   putStrLn $ "        -a (default) : Algorithm that memoizes subsets of tasks that sum to a particular number." 
-        ++ " (Note: memory usage is proportional to the sum of tasks)"
-  putStrLn "        -b : Algorithm above without memoization"
-  putStrLn "        -c : Depth first search with pruning"
-  putStrLn "        -d : Naive recursive depth first search algorithm"
+          ++ " (Note: memory usage is proportional to the sum of tasks)"
+  putStrLn   "        -b : Algorithm above without memoization"
+  putStrLn   "        -c : Depth first search with pruning"
+  putStrLn   "        -d : Naive recursive depth first search algorithm"
 
 printSolution :: TaskAssignment -> IO ()
 printSolution (TaskAssignment c1 c2 c3) = do

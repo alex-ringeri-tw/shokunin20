@@ -38,25 +38,25 @@ assignDFS :: TaskAssigner
 assignDFS tasks = do
   guard (m == 0)
   case tasks of 
-    (t:ts) -> cAssign' (TaskAssignment [t] [] []) ts
+    (t:ts) -> assign (TaskAssignment [t] [] []) ts
     _      -> return (TaskAssignment [] [] [])
   
   where
     s = sum $ points <$> tasks
     (tgt, m) = s `divMod` 3
 
-    cAssign' r (t:ts) =
+    assign r (t:ts) =
       assignTo' child1 child1'
         <|> assignTo' child2 child2'
         <|> assignTo' child3 child3' 
       where
         assignTo' c c' = do
           guard $ sumPoints c + points t <= tgt
-          cAssign' (assignTo c' r) ts
+          assign (assignTo c' r) ts
 
         assignTo child = child (t:)
         sumPoints f = sum $ points <$> f r
-    cAssign' r [] 
+    assign r [] 
       | sumPoints child1 == sumPoints child2 
           && sumPoints child2 == sumPoints child3 = Just r
       | otherwise = Nothing
@@ -71,10 +71,9 @@ assignNonMemo ts = do
   let (tgt, m) = s `divMod` 3
   guard (m == 0)
 
-  let assignR = fix (canAssign tasks)
+  let assign = fix (assignSubset tasks)
 
-  assignR tgt tgt n
-              
+  assign tgt tgt n        
 
 assignMemo :: TaskAssigner
 assignMemo ts = do
@@ -86,7 +85,7 @@ assignMemo ts = do
   guard (m == 0)
 
   let memoize = memo ((0,0,0), (tgt,tgt,n))
-  let assign_' = canAssign tasks
+  let assign_' = assignSubset tasks
   let assignMemo' = fix (memoize . assign_') 
 
   assignMemo' tgt tgt n
@@ -104,23 +103,23 @@ memo b f =
                                , k <- [k'..k''] ]
   in \i j k -> a ! (i, j, k)
 
-canAssign :: Array Int Task 
-          -> (Int -> Int -> Int -> Maybe TaskAssignment) 
-          -> Int -> Int -> Int -> Maybe TaskAssignment
-canAssign tasks _ 0 0 0 = return $ TaskAssignment [] [] (elems tasks)
-canAssign _     _ _ _ 0 = Nothing
-canAssign tasks _ 0 0 _ = return $ TaskAssignment [] [] (elems tasks)
-canAssign tasks f i j k = 
-        canAssignFirst  (assignTo child1')
-    <|> canAssignSecond (assignTo child2')
+assignSubset :: Array Int Task 
+             -> (Int -> Int -> Int -> Maybe TaskAssignment) 
+             -> Int -> Int -> Int -> Maybe TaskAssignment
+assignSubset tasks _ 0 0 0 = return $ TaskAssignment [] [] (elems tasks)
+assignSubset _     _ _ _ 0 = Nothing
+assignSubset tasks _ 0 0 _ = return $ TaskAssignment [] [] (elems tasks)
+assignSubset tasks f i j k = 
+        assignFirst  (assignTo child1')
+    <|> assignSecond (assignTo child2')
     <|> f i j (k-1)
   where
     t = tasks ! k
     assignTo child = child (t:) . child3' (delete t) 
 
-    canAssignFirst  = canAssign' i (\i' -> f i' j  (k-1))
-    canAssignSecond = canAssign' j (\j' -> f i  j' (k-1))
-    canAssign' v f' u = 
+    assignFirst  = assign i (\i' -> f i' j  (k-1))
+    assignSecond = assign j (\j' -> f i  j' (k-1))
+    assign v f' u = 
       let v' = v - points t
       in  when' (v' >= 0) (u <$> f' v')
     
