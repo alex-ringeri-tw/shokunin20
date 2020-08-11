@@ -11,15 +11,15 @@ arbitraryPositiveTasks :: Gen [Task]
 arbitraryPositiveTasks = listOf $ (\(Positive a) -> Task a) <$> arbitrary
 
 arbitraryTasksWithBounds :: (Int, Int) -> Gen [Task]
-arbitraryTasksWithBounds b = listOf  (Task <$> chooseInt b)
+arbitraryTasksWithBounds b = listOf  (Task <$> choose b)
 
 spec :: Spec
 spec = do
   describe "TaskAssigner.assignDFS'" 
     (commonAssignmentChecks assignDFS' 10) 
   describe "TaskAssigner.assignMemo" $ do
-    commonAssignmentChecks assignMemo 70
-    modifyArgs (\args -> args { maxSize = 200 }) $
+    commonAssignmentChecks assignMemo 50
+    modifyArgs (\args -> args { maxSize = 150 }) $
       it "should handle large lists with low task values" $ 
         forAll 
           (arbitraryTasksWithBounds (1, 10))

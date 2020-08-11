@@ -47,7 +47,7 @@ test-suite spec
   build-depends:
       base >= 4.13 && < 4.14
     , hspec ==2.*
-    , QuickCheck >= 2.14 && < 2.15
+    , QuickCheck >= 2.13
     , shokunin20-lib
     , containers
     , multiset
