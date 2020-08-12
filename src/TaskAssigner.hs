@@ -64,16 +64,18 @@ assignDFS tasks = do
         sumPoints f = sum $ points <$> f r
 
 assignNonMemo :: TaskAssigner
-assignNonMemo ts = do
-  let n = length ts
-  let tasks = listArray (1, n) ts
-  let s = sum $ points <$> tasks
-  let (tgt, m) = s `divMod` 3
-  guard (m == 0)
+assignNonMemo ts =
+  let 
+    n = length ts
+    tasks = listArray (1, n) ts
+    s = sum $ points <$> tasks
+    (tgt, m) = s `divMod` 3
+  in do
+    guard (m == 0)
 
-  let assign = fix (assignSubset tasks)
+    let assign = fix (assignSubset tasks)
 
-  assign tgt tgt n        
+    assign tgt tgt n        
 
 assignMemo :: TaskAssigner
 assignMemo ts = do
