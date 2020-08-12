@@ -47,4 +47,5 @@ jobs:
 
     - name: Build Docker Image
       uses: actions-hub/docker@master
-      run: ./docker-build.sh
+      with:
+        args: build -t aringeri-shokunin20 .
